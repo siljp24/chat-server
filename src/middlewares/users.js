@@ -14,6 +14,16 @@ const isValid = (req,res,next)=>{
     next();
 }
 
+const isAdmin = (req,res,next)=>{
+    const { token } = req.headers;
+    const data = jwt.verify(token, 'loquesea');
+    if(data.user.admin === false){
+        return res.status(409).json({error: 'No tienes acceso'});
+    }
+    next();
+}
+
 module.exports={
     isValid,
+    isAdmin,
 }

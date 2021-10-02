@@ -6,5 +6,6 @@ const router = Router();
 
 router.post('/create', middleware.users.isValid ,controllers.message.create);
 router.post('/chat',middleware.users.isValid ,controllers.message.chat);
+// router.delete('/delete', controllers.message.remove);
 
 module.exports= router;

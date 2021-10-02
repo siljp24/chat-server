@@ -61,8 +61,48 @@ const listUsers = async (req, res)=>{
     
 }
 
+const removeUser = async (req,res)=>{
+    try{
+        const {userId} = req.body;
+        if(!userId){
+            return res.status(400).json({error: 'Usuario vacío'})
+        }
+        await removeMessages(userId);
+        const userDeleted = await models.user.findByIdAndDelete(userId);
+        if(userDeleted){
+            const users = await models.user.find();
+            res.status(201).json({ users })
+        }else{
+            res.status(400).json({error: 'Usuario no encontrado'});
+        }
+    }catch(err){
+        console.log(err)
+        res.status(409).json(err);
+    }
+}
+
+async function removeMessages (userId){
+    try{
+        const user = await models.user.findById(userId);
+        if(!user){
+           return false;
+        }
+
+        await models.message.deleteMany({user1: userId});
+        await models.message.deleteMany({user2: userId});
+        const messages = await models.message.find();
+
+        return true;
+    }catch(err){
+        console.log(err);
+        return false;
+    }
+    
+}
+
 module.exports = {
     signIn,
     signUp,
-    listUsers
+    listUsers, 
+    removeUser,
 }
